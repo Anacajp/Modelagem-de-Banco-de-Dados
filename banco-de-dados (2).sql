@@ -1,0 +1,79 @@
+CREATE TABLE IF NOT EXISTS "User" (
+	"Ids" bigint GENERATED ALWAYS AS IDENTITY NOT NULL UNIQUE,
+	"Names" text NOT NULL,
+	"Emails" text NOT NULL,
+	"Passwords" text NOT NULL,
+	"Access_Levels" boolean NOT NULL,
+	"Associated_Assemble_Line" text NOT NULL,
+	"Associated_Tasks" text NOT NULL,
+	"Associated_Favorites" text NOT NULL,
+	PRIMARY KEY ("Ids")
+);
+
+CREATE TABLE IF NOT EXISTS "Handbooks" (
+	"Ids" bigint GENERATED ALWAYS AS IDENTITY NOT NULL UNIQUE,
+	"Associated_Product_Ids" bigint NOT NULL,
+	"Names" text NOT NULL,
+	"Descriptions" text NOT NULL,
+	"Upload_Dates" time without time zone NOT NULL,
+	"Additional_Files_Ids" bigint NOT NULL,
+	"Publication_Dates" time without time zone NOT NULL,
+	"Associated_Assembly_Line" bigint NOT NULL,
+	"Associated_Tasks" bigint NOT NULL,
+	PRIMARY KEY ("Ids")
+);
+
+CREATE TABLE IF NOT EXISTS "Task" (
+	"Ids" bigint GENERATED ALWAYS AS IDENTITY NOT NULL UNIQUE,
+	"Is_Finished" boolean NOT NULL,
+	"Upload_Dates" time without time zone NOT NULL,
+	"Finish_Dates" time without time zone NOT NULL,
+	PRIMARY KEY ("Ids")
+);
+
+CREATE TABLE IF NOT EXISTS "Favorites" (
+	"Ids" bigint GENERATED ALWAYS AS IDENTITY NOT NULL UNIQUE,
+	"Handbook_Ids" bigint NOT NULL,
+	"Handbook_Descriptions" text NOT NULL,
+	"Handbook_Names" text NOT NULL,
+	PRIMARY KEY ("Ids")
+);
+
+CREATE TABLE IF NOT EXISTS "AssembleLine" (
+	"Ids" bigint GENERATED ALWAYS AS IDENTITY NOT NULL UNIQUE,
+	"Type_Of" text NOT NULL,
+	"Descriptions" text NOT NULL,
+	PRIMARY KEY ("Ids")
+);
+
+CREATE TABLE IF NOT EXISTS "Products" (
+	"Ids" bigint GENERATED ALWAYS AS IDENTITY NOT NULL UNIQUE,
+	"Names" text NOT NULL,
+	"Associated_Assemble_Lines_Ids" bigint NOT NULL,
+	PRIMARY KEY ("Ids")
+);
+
+CREATE TABLE IF NOT EXISTS "AdditionalFiles" (
+	"Ids" bigint GENERATED ALWAYS AS IDENTITY NOT NULL UNIQUE,
+	"Associated_Publication_Dates" time without time zone NOT NULL,
+	"Types_Of_Files" text NOT NULL,
+	"Files_Path" text NOT NULL,
+	PRIMARY KEY ("Ids")
+);
+
+ALTER TABLE "User" ADD CONSTRAINT "User_fk5" FOREIGN KEY ("Associated_Assemble_Line") REFERENCES "AssembleLine"("Ids");
+
+ALTER TABLE "User" ADD CONSTRAINT "User_fk6" FOREIGN KEY ("Associated_Tasks") REFERENCES "Task"("Ids");
+
+ALTER TABLE "User" ADD CONSTRAINT "User_fk7" FOREIGN KEY ("Associated_Favorites") REFERENCES "Favorites"("Ids");
+ALTER TABLE "Handbooks" ADD CONSTRAINT "Handbooks_fk1" FOREIGN KEY ("Associated_Product_Ids") REFERENCES "Products"("Ids");
+
+ALTER TABLE "Handbooks" ADD CONSTRAINT "Handbooks_fk5" FOREIGN KEY ("Additional_Files_Ids") REFERENCES "AdditionalFiles"("Ids");
+
+ALTER TABLE "Handbooks" ADD CONSTRAINT "Handbooks_fk7" FOREIGN KEY ("Associated_Assembly_Line") REFERENCES "AssembleLine"("id");
+
+ALTER TABLE "Handbooks" ADD CONSTRAINT "Handbooks_fk8" FOREIGN KEY ("Associated_Tasks") REFERENCES "Task"("Ids");
+
+ALTER TABLE "Favorites" ADD CONSTRAINT "Favorites_fk1" FOREIGN KEY ("Handbook_Ids") REFERENCES "Handbooks"("Ids");
+
+ALTER TABLE "Products" ADD CONSTRAINT "Products_fk2" FOREIGN KEY ("Associated_Assemble_Lines_Ids") REFERENCES "AssembleLine"("Ids");
